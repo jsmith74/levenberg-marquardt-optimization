@@ -75,27 +75,24 @@ void LM_Optimization::evaluateJacobian(){
 
 double LM_Optimization::findMaxTau(Eigen::VectorXd& pck, Eigen::VectorXd& pjk){
 
-    std::ofstream outfile("test.dat");
-
-    for(double tau=0.0;tau<=1.0;tau+=0.0001){
-
-        outfile << tau << "\t" << ( pck + tau * (pjk - pck) ).norm() << "\t" << D  <<std::endl;
-
-    }
-
-    outfile.close();
-
     double output1,output2;
 
     output1 = pck.norm();
 
     if(output1 > D) return 0.0;
 
+
     for(double tau=0.0;tau<=1.0;tau+=0.0001){
 
         output2 = ( pck + tau * (pjk - pck) ).norm();
 
-        assert(output2 >= output1);
+        if(output1 > output2){
+
+            printTau(pck,pjk);
+
+            //assert(output2 >= output1);
+
+        }
 
         if( output2 > D ){
 
@@ -113,6 +110,22 @@ double LM_Optimization::findMaxTau(Eigen::VectorXd& pck, Eigen::VectorXd& pjk){
 
 }
 
+void LM_Optimization::printTau(Eigen::VectorXd& pck, Eigen::VectorXd& pjk){
+
+    std::ofstream outfile("test.dat");
+
+    for(double tau=0.0;tau<=1.0;tau+=0.0001){
+
+        outfile << tau << "\t" << ( pck + tau * (pjk - pck) ).norm() << "\t" << D  <<std::endl;
+
+    }
+
+    outfile.close();
+
+    return;
+
+}
+
 void LM_Optimization::dogleg(Eigen::VectorXd& pk){
 
     double tau = std::min(1.0 , pow( ( J.transpose() * r ).norm() , 3) / ( D * r.transpose() * J * J.transpose() * J * J.transpose() * r ) );
@@ -123,7 +136,7 @@ void LM_Optimization::dogleg(Eigen::VectorXd& pk){
 
     else{
 
-         Eigen::VectorXd pjk = -J.inverse() * r;
+         Eigen::VectorXd pjk = -( J.transpose() * J ).inverse() * ( J.transpose() * r );//-J.inverse() * r;
 
          double tauSub = findMaxTau(pck,pjk);
 
@@ -167,11 +180,11 @@ double LM_Optimization::minimize(){
 
         rho -= r.transpose() * r;
 
-        rho /= rhoDenom;
+        if(rhoDenom != 0) rho /= rhoDenom;
 
         #ifdef PRINT_STEP_MONITOR
 
-            std::cout << rho << "\t" << J.determinant()  << std::endl;
+            std::cout << rho << "\t" << D << std::endl; //"\t" << J.determinant()  << std::endl;
 
         #endif // PRINT_STEP_MONITOR
 
@@ -187,7 +200,7 @@ double LM_Optimization::minimize(){
 
         #ifdef USE_EXPERIMENTAL_STOPPING_CONDITION
 
-            if( std::abs(J.determinant()) < tol) break;
+            if( D < tol) break;
 
         #endif // USE_EXPERIMENTAL_STOPPING_CONDITION
 

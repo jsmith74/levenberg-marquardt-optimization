@@ -21,6 +21,7 @@ class LM_Optimization{
 
         void evaluateJacobian();
         void dogleg(Eigen::VectorXd& pk);
+        void printTau(Eigen::VectorXd& pck, Eigen::VectorXd& pjk);
 
         double findMaxTau(Eigen::VectorXd& pck, Eigen::VectorXd& pjk);
 
