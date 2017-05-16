@@ -2,12 +2,13 @@
 #define LM_OPTIMIZATION_H_INCLUDED
 
 #include "MeritFunction.h"
+#include <fstream>
 
 class LM_Optimization{
 
     public:
 
-        LM_Optimization();
+        LM_Optimization(double maxStepSize,double tolerance);
         double minimize();
 
     private:
@@ -15,11 +16,15 @@ class LM_Optimization{
         MeritFunction meritFunction;
 
         Eigen::VectorXd position;
+        Eigen::VectorXd r;
         Eigen::MatrixXd J;
 
         void evaluateJacobian();
+        void dogleg(Eigen::VectorXd& pk);
 
-        double eps;
+        double findMaxTau(Eigen::VectorXd& pck, Eigen::VectorXd& pjk);
+
+        double eps,Dbar,D,tol;
 
 };
 

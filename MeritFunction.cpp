@@ -8,33 +8,31 @@ void MeritFunction::setMeritFunction(int intParam){
 
     rDimension = 2;
 
-    r.resize(rDimension);
-
     return;
 
 }
 
-void MeritFunction::updateR(Eigen::VectorXd& position){
+void MeritFunction::updateR(Eigen::VectorXd& position,Eigen::VectorXd& r){
 
     r(0) = position(0);
     r(1) = 10*position(0)/(position(0) + 0.1) + 2*position(1)*position(1);
 
+    /** ALSO TRY PLUGGING IN SQUARES OF THIS ============= */
+
     return;
 
 }
 
-double MeritFunction::f(){
-
-    return r.transpose() * r; // r(0) + r(1);   MAKE SURE THIS DOESN'T WORK
-
-}
 
 
 void MeritFunction::printReport(Eigen::VectorXd& position){
 
-    std::cout << "OPTIMIZATION RESULT: " << std::endl;
-    std::cout << std::pow(position(0) * position(1) - 3,2) + 1.0 << std::endl << std::endl;
-    std::cout << position << std::endl << std::endl;
+    Eigen::VectorXd r(2);
+
+    r(0) = position(0);
+    r(1) = 10*position(0)/(position(0) + 0.1) + 2*position(1)*position(1);
+
+    std::cout << r.transpose();
 
     return;
 

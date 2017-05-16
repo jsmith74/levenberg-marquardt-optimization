@@ -10,12 +10,10 @@ class MeritFunction{
 
         MeritFunction();
         void setMeritFunction(int intParam);
-        double f();
-        void updateR(Eigen::VectorXd& position);
+        void updateR(Eigen::VectorXd& position,Eigen::VectorXd& r);
         int fDimension,rDimension;
         void printReport(Eigen::VectorXd& position);
         Eigen::VectorXd setInitialPosition();
-        Eigen::VectorXd r;
 
     private:
 
