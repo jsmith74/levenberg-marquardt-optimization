@@ -2,7 +2,7 @@
 
 
 
-void MeritFunction::setMeritFunction(int intParam){
+void MeritFunction::setMeritFunction(){
 
     fDimension = 2;
 
@@ -17,22 +17,22 @@ void MeritFunction::updateR(Eigen::VectorXd& position,Eigen::VectorXd& r){
     r(0) = position(0);
     r(1) = 10*position(0)/(position(0) + 0.1) + 2*position(1)*position(1);
 
-    /** ALSO TRY PLUGGING IN SQUARES OF THIS ============= */
-
     return;
 
 }
 
 
 
-void MeritFunction::printReport(Eigen::VectorXd& position){
+void MeritFunction::printResult(Eigen::VectorXd& position,Eigen::VectorXd& r){
 
-    Eigen::VectorXd r(2);
+    std::cout << std::endl << std::endl << std::endl;
 
     r(0) = position(0);
     r(1) = 10*position(0)/(position(0) + 0.1) + 2*position(1)*position(1);
 
-    std::cout << r.transpose();
+    std::cout << r.sum();
+
+    std::cout << std::endl << std::endl;
 
     return;
 

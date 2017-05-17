@@ -16,10 +16,15 @@
 
 /** ================================================================ */
 
-
 /** ===== Turn Experimental Stopping Condition On ================== */
 
 #define USE_EXPERIMENTAL_STOPPING_CONDITION
+
+/** ================================================================ */
+
+/** ===== Set Maximum number of steps algorithm will take ========== */
+
+#define MAXIMUM_NUMBER_OF_STEPS 6000
 
 /** ================================================================ */
 
@@ -31,7 +36,7 @@ LM_Optimization::LM_Optimization(double maxStepSize,double tolerance){
 
     #endif // SEED_RANDOM_NUMBER_GENERATOR
 
-    meritFunction.setMeritFunction(1);
+    meritFunction.setMeritFunction();
 
     J.resize(meritFunction.rDimension,meritFunction.fDimension);
 
@@ -156,15 +161,27 @@ double LM_Optimization::minimize(){
 
     Eigen::VectorXd pk;
 
+    int stepIndex = 0;
+
     while(true){
 
         evaluateJacobian();
 
         #ifdef PRINT_STEP_MONITOR
 
-            std::cout << r.sum() << "\t";;
+            std::cout << stepIndex << "\t" << r.sum() << "\t";
 
         #endif // PRINT_STEP_MONITOR
+
+        #ifdef USE_EXPERIMENTAL_STOPPING_CONDITION
+
+            if( D < tol) break;
+
+        #endif // USE_EXPERIMENTAL_STOPPING_CONDITION
+
+        if( stepIndex > MAXIMUM_NUMBER_OF_STEPS ) break;
+
+        stepIndex++;
 
         dogleg(pk);
 
@@ -198,14 +215,10 @@ double LM_Optimization::minimize(){
 
         if( rho > ETA ) position += pk;
 
-        #ifdef USE_EXPERIMENTAL_STOPPING_CONDITION
-
-            if( D < tol) break;
-
-        #endif // USE_EXPERIMENTAL_STOPPING_CONDITION
-
 
     }
+
+    meritFunction.printResult(position,r);
 
     return 2.0;
 
